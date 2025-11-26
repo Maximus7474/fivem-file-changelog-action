@@ -4,17 +4,21 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "test": "jest",
     "build": "bun build src/index.ts --outdir=dist --target=node20"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^24.10.1"
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.1",
+    "jest": "^30.2.0"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@actions/github": "^6.0.1"
+    "@actions/github": "^6.0.1",
+    "ts-jest": "^29.4.5"
   }
 }
