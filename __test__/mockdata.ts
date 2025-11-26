@@ -1,9 +1,5 @@
-import type { components } from "@octokit/openapi-types";
-
-type Tag = components["schemas"]["tag"];
-type Commit = components["schemas"]["commit"];
-type DiffEntry = components["schemas"]["diff-entry"];
-type CompareCommits = components["schemas"]["commit-comparison"];
+import type { DiffEntry } from "util";
+import type { Commit, CompareCommits, Tag } from "../types/github";
 
 export const CONTEXT_OWNER = 'test-owner';
 export const CONTEXT_REPO = 'test-repo';
@@ -49,11 +45,11 @@ export const MOCK_COMMITS: Commit[] = [
 ];
 
 export const MOCK_FILECHANGES: DiffEntry[] = [
-  { status: 'modified', filename: 'src/file1.ts', sha: 'file-sha-1', changes: 1, additions: 1, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as DiffEntry,
-  { status: 'modified', filename: 'src/file2.ts', sha: 'file-sha-2', changes: 1, additions: 1, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as DiffEntry,
-  { status: 'added', filename: 'tests/file2.test.ts', sha: 'file-sha-2', changes: 1, additions: 1, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as DiffEntry,
-  { status: 'removed', filename: 'old/legacy.js', sha: 'file-sha-3', changes: 0, additions: 0, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as DiffEntry,
-  { status: 'renamed', filename: 'new/config.yaml', previous_filename: 'old/config.yml', sha: 'file-sha-4', changes: 0, additions: 0, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as DiffEntry,
+  { status: 'modified', filename: 'src/file1.ts', sha: 'file-sha-1', changes: 1, additions: 1, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as unknown as DiffEntry,
+  { status: 'modified', filename: 'src/file2.ts', sha: 'file-sha-2', changes: 1, additions: 1, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as unknown as DiffEntry,
+  { status: 'added', filename: 'tests/file2.test.ts', sha: 'file-sha-2', changes: 1, additions: 1, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as unknown as DiffEntry,
+  { status: 'removed', filename: 'old/legacy.js', sha: 'file-sha-3', changes: 0, additions: 0, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as unknown as DiffEntry,
+  { status: 'renamed', filename: 'new/config.yaml', previous_filename: 'old/config.yml', sha: 'file-sha-4', changes: 0, additions: 0, deletions: 0, blob_url: 'mock-blob', raw_url: 'mock-raw' } as unknown as DiffEntry,
 ];
 
 export const mockComparisonData: CompareCommits = {
