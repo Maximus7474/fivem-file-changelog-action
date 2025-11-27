@@ -2,8 +2,8 @@ import { run } from '../src/index';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
-import { CONTEXT_HEAD_SHA, CONTEXT_OWNER, CONTEXT_REPO, MOCK_BASE_SHA, MOCK_TAG_NAME, mockTagResponse } from './mockdata';
-import { setupOctokitMocks } from './setupMocks';
+import { mockTagResponse } from './mockdata';
+import { mockSaveChangelog, mockSendWebhook, setupOctokitMocks } from './setupMocks';
 import { getConfig } from '../src/config';
 
 describe('run', () => {
@@ -18,6 +18,12 @@ describe('run', () => {
       changelogFilename: process.env.CHANGELOG_FILENAME || false,
       ignorePatterns: [],
     });
+
+    // (core.setFailed as jest.Mock).mockImplementation((msg: string) => console.error(`[JEST] core.setFailed("${msg}")`));
+    // (core.info as jest.Mock).mockImplementation((msg: string) => console.log(`[JEST] core.info("${msg}")`));
+
+    mockSendWebhook.mockClear();
+    mockSaveChangelog.mockClear();
   });
 
   it('should call setFailed and exit if no tags are found', async () => {
@@ -25,25 +31,26 @@ describe('run', () => {
 
     await run();
 
-    expect(core.setFailed).toHaveBeenCalledWith('No Git tags found in the repository.');
-
     const octokitMock = (github.getOctokit as jest.Mock).mock.results[0]!.value;
+
+    expect(octokitMock.rest.repos.listTags).toHaveBeenCalled();
     expect(octokitMock.rest.repos.compareCommits).not.toHaveBeenCalled();
+
+    expect(core.setFailed).toHaveBeenCalledWith('No Git tags found in the repository.');
   });
 
-  it('should exit gracefully if the latest tag SHA matches the current HEAD SHA', async () => {
-    const tagIsHead = [{ ...mockTagResponse[0], commit: { sha: CONTEXT_HEAD_SHA } }];
-    setupOctokitMocks(tagIsHead);
+  it('should fail if only one release', async () => {
+    setupOctokitMocks(mockTagResponse.slice(0, 1));
 
-    await run();
+    const changedFiles = await run();
 
-    expect(core.info).toHaveBeenCalledWith(
-      'The latest tag is the current HEAD. No new commits to compare.'
-    );
-    expect(core.setFailed).not.toHaveBeenCalled();
+    expect(core.info).toHaveBeenCalledWith('Fetching latest tag...');
 
     const octokitMock = (github.getOctokit as jest.Mock).mock.results[0]!.value;
-    expect(octokitMock.rest.repos.compareCommits).not.toHaveBeenCalled();
+    expect(octokitMock.rest.repos.compareCommits).not.toHaveBeenCalledWith();
+
+    expect(changedFiles).toBeUndefined();
+    expect(core.info).toHaveBeenCalledWith('No other releases to compare');
   });
 
   it('should correctly handle renamed files (status=renamed)', async () => {
@@ -61,8 +68,8 @@ describe('run', () => {
 
     const changedFiles = await run();
 
-    expect(changedFiles).toBeDefined();
     expect(core.setFailed).not.toHaveBeenCalled();
+    expect(changedFiles).toBeDefined();
 
     if (changedFiles) {
       expect(changedFiles.removed).toEqual(['old/path/component.js']);
