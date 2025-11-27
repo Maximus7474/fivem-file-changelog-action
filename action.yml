@@ -13,6 +13,10 @@ inputs:
     description: "The file format to store the changes as (supports: md, txt)"
     required: false
     default: "{version}.txt"
+  ignore_patterns:
+    description: 'A list of file patterns (globs) to exclude from the changelog (e.g., **/*.md, docs/**).'
+    required: true
+    default: '.*'
 # outputs:
 #   time:
 #     description: "The time of the greeting"
