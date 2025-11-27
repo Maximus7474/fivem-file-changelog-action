@@ -2,10 +2,12 @@ import * as core from "@actions/core";
 
 import type { FileChangelog } from "../types/core";
 import type { WebhookPayload } from "../types/webhook";
+import { DISCORD_WEBHOOK } from "./config";
 
 type ActionCore = typeof core;
 
-export async function SendWebhook(webhook: string, versionRef: string, changelog: FileChangelog, core: ActionCore) {
+export async function SendWebhook(versionRef: string, changelog: FileChangelog, core: ActionCore) {
+  const webhook = DISCORD_WEBHOOK;
   if (!webhook || typeof webhook !== 'string') {
     throw new Error('Invalid or missing Discord Webhook URL.');
   }
