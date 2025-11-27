@@ -13,6 +13,8 @@ export async function run() {
     // checks for configuration happen within the modules, if not configured it'll return before any actions
     await SendWebhook(version, changedFiles, core);
     await SaveChangelog(version, changedFiles, core);
+
+    return changedFiles;
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);
