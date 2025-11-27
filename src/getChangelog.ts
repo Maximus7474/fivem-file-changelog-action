@@ -46,18 +46,19 @@ export async function getFileChangelog() {
     return;
   }
 
-  let latestTag = tagsResponse.data[0];
+  const latestTag = tagsResponse.data[0];
+  let previousTag = tagsResponse.data[0];
   let baseCommitSha = latestTag.commit.sha;
 
   if (latestTag.commit.sha === currentSha && tagsResponse.data[1]) {
-    latestTag = tagsResponse.data[1];
+    previousTag = tagsResponse.data[1];
     baseCommitSha = latestTag.commit.sha;
   } else {
     core.info('No other releases to compare');
     return;
   }
 
-  core.info(`Latest Tag Found: ${latestTag.name}`);
+  core.info(`Latest Tag Found: ${previousTag.name}`);
   core.info(`Base Commit SHA (Tag): ${baseCommitSha}`);
 
   // if the latest tag is the current commit, there are no new changes
@@ -66,7 +67,7 @@ export async function getFileChangelog() {
     return;
   }
 
-  core.info(`Comparing commits between ${latestTag.name} and HEAD...`);
+  core.info(`Comparing commits between ${previousTag.name} and HEAD...`);
 
   const comparisonResponse = await octokit.rest.repos.compareCommits({
     owner,
