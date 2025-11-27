@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "build": "bun build src/index.ts --outdir=dist --target=node20"
+    "build": "bun build src/index.ts --outdir=dist --target=node --minify"
   },
   "devDependencies": {
     "@types/bun": "latest",
