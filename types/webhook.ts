@@ -12,5 +12,5 @@ export interface WebhookPayload {
   content?: string;
   username?: string;
   avatar_url?: string;
-  embeds?: DiscordEmbed[];
+  embeds: DiscordEmbed[];
 }
