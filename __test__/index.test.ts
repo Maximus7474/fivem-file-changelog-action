@@ -63,12 +63,17 @@ describe('run', () => {
   beforeEach(() => {
     // Clear all mock function calls before each test
     jest.clearAllMocks();
+
     (core.getInput as jest.Mock).mockImplementation((name) => {
       if (name === 'github_token') return 'mock-token';
       else if (name === 'webhook' && process.env.DISCORD_WEBHOOK) return process.env.DISCORD_WEBHOOK;
       else if (name === 'changelog' && process.env.CHANGELOG_DIR) return process.env.CHANGELOG_DIR;
       else if (name === 'changelog_filename' && process.env.CHANGELOG_FILENAME) return process.env.CHANGELOG_FILENAME;
       return '';
+    });
+
+    (core.setFailed as jest.Mock).mockImplementation((message) => {
+      console.error('[CORE MOCK] (action failed)', message);
     });
   });
 
