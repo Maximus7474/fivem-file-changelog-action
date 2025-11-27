@@ -9,6 +9,10 @@ inputs:
     description: "Save the changed files to the changelog directory (fill in with a directory)"
     required: false
     default: ""
+  changelog_filename:
+    description: "The file format to store the changes as (supports: md, txt)"
+    required: false
+    default: "{version}.txt"
 # outputs:
 #   time:
 #     description: "The time of the greeting"
