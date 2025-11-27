@@ -1,11 +1,32 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import picomatch from 'picomatch';
 
 import type { FileChangelog } from '../types/core';
 import { getConfig } from './config';
 
+function cleanUpChangelog(changelog: FileChangelog, ignorePatterns: string[]): FileChangelog {
+  if (ignorePatterns.length === 0) {
+    return changelog;
+  }
+
+  const isMatch = picomatch(ignorePatterns, { dot: true });
+
+  const filterFiles = (files: string[]) => {
+    return files.filter(filePath => {
+      return !isMatch(filePath);
+    });
+  };
+
+  return {
+    added: filterFiles(changelog.added),
+    removed: filterFiles(changelog.removed),
+    modified: filterFiles(changelog.modified),
+  };
+}
+
 export async function getFileChangelog() {
-  const { githubToken } = getConfig()
+  const { githubToken, ignorePatterns } = getConfig()
   const octokit = github.getOctokit(githubToken);
   const { owner, repo } = github.context.repo;
   const currentSha = github.context.sha;
@@ -69,7 +90,10 @@ export async function getFileChangelog() {
       }
     }
 
-    return { changedFiles, version: latestTag.name };
+    return {
+      changedFiles: cleanUpChangelog(changedFiles, ignorePatterns),
+      version: latestTag.name
+    };
   } else {
     core.info('No changes found, exiting...')
     return;
