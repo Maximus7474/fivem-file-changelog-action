@@ -61,7 +61,5 @@ export async function SaveChangelog(versionRef: string, changelog: FileChangelog
     changelog.modified, "Modified files", fileFormat
   );
 
-  const filename = changelogFilename.replace('{version}', versionRef);
-
-  await writeFile(path.join(changelogDir, filename), fileContent);
+  await writeFile(path.join(changelogDir, changelogFilename), fileContent);
 }
