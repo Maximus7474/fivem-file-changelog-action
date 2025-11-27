@@ -11,6 +11,7 @@
     "@types/bun": "latest",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
+    "@types/picomatch": "^4.0.2",
     "jest": "^30.2.0"
   },
   "peerDependencies": {
@@ -19,6 +20,7 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.1",
+    "picomatch": "^4.0.3",
     "ts-jest": "^29.4.5"
   }
 }
